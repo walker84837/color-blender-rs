@@ -16,15 +16,15 @@ impl ColorBlender {
         let start = Self::parse_hex_color(start_color);
         let end = Self::parse_hex_color(end_color);
 
-        let count = precision + 2; // Number of colors including start and end
+        let count = precision + 2;
 
         let mut palette = Vec::with_capacity(count);
-        palette.push(start.clone()); // Clone the start color instead of moving it
+        palette.push(start.clone());
         for i in 1..count - 1 {
             let r = start.red + ((end.red - start.red) * i as i32) / (count as i32 - 1);
             let g = start.green + ((end.green - start.green) * i as i32) / (count as i32 - 1);
             let b = start.blue + ((end.blue - start.blue) * i as i32) / (count as i32 - 1);
-            palette.push(Color::new(r, g, b)); // Create a new color without cloning
+            palette.push(Color::new(r, g, b));
         }
         palette.push(end);
 
@@ -46,7 +46,7 @@ impl ColorBlender {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)] // Implement Clone for the Color struct
+#[derive(Debug, PartialEq, Eq, Clone)]
 struct Color {
     red: i32,
     green: i32,
