@@ -7,24 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## \[Unreleased\]
 
-## \[0.1.0\] - 2023-11-08
-
-### Added
-
-  - None.
+## \[0.2.0\] - 2023-12-09
 
 ### Fixed
 
-  - None.
+  - Removed trailing empty line in [code of conduct](CODE_OF_CONDUCT.md) file.
+  - Updated various sections in the [readme](README.md) file, and added project status section:
+    - Installation
+    - Usage & examples
+    - Contributing
+
+### Changed
+
+  - Switched error handling to `anyhow`.
+  - Refactored the majority of the code:
+    - Simplified `Blending` struct and its `write` and `print` functions in [main.rs](src/main.rs).
+    - Improved readability when calling the `blend_colors` function in in [color_blender.rs](src/color_blender.rs).
+
+## \[0.1.0\] - 2023-11-08
 
 ### Changed
 
   - Made the midpoints and "should write" bools optional.
   - Changed command-line argument option for midpoints.
-
-### Removed
-
-  - None.
 
 ## \[0.0.2\] - 2023-10-14
 
@@ -38,24 +43,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
   - Renamed the LICENSE file to LICENSE.md for formatting purposes.
   - Made the README.md simpler to read.
 
-### Removed
-
-  - None.
-
 ## \[0.0.1\] - 2023-07-30
 
 ### Added
 
   - Initial release of `color-blender-rs`.
-
-### Fixed
-
-  - None.
-
-### Changed
-
-  - None.
-
-### Removed
-
-  - None.
