@@ -1,44 +1,47 @@
 use std::cmp::Ordering;
 
-pub struct ColorBlender;
+#[derive(Clone)]
+pub struct ColorBlender {
+    start_color: String,
+    end_color: String,
+    precision: usize,
+}
 
 impl ColorBlender {
-    pub fn new() -> ColorBlender {
-        ColorBlender
+    pub fn new(start_color: String, end_color: String, precision: usize) -> ColorBlender {
+        ColorBlender {
+            start_color,
+            end_color,
+            precision,
+        }
     }
 
-    pub fn blend_colors(
-        &self,
-        start_color: &str,
-        end_color: &str,
-        precision: usize,
-    ) -> Vec<String> {
-        let start = Self::parse_hex_color(start_color);
-        let end = Self::parse_hex_color(end_color);
+    pub fn blend_colors(&self) -> Vec<String> {
+        let start = Self::parse_hex_color(self.start_color.clone());
+        let end = Self::parse_hex_color(self.end_color.clone());
 
-        let count = precision + 2;
+        let count = self.precision + 2;
 
-        let mut palette = Vec::with_capacity(count);
-        palette.push(start.clone());
-        for i in 1..count - 1 {
-            let r = start.red + ((end.red - start.red) * i as i32) / (count as i32 - 1);
-            let g = start.green + ((end.green - start.green) * i as i32) / (count as i32 - 1);
-            let b = start.blue + ((end.blue - start.blue) * i as i32) / (count as i32 - 1);
-            palette.push(Color::new(r, g, b));
-        }
-        palette.push(end);
-
-        palette
-            .into_iter()
-            .map(|color| Self::color_to_hex(color))
+        (0..count)
+            .map(|i| {
+                let t = i as f64 / (count - 1) as f64;
+                let r = start.red + ((end.red - start.red) as f64 * t) as i32;
+                let g = start.green + ((end.green - start.green) as f64 * t) as i32;
+                let b = start.blue + ((end.blue - start.blue) as f64 * t) as i32;
+                Color::new(r, g, b)
+            })
+            .map(Self::color_to_hex)
             .collect()
     }
 
-    fn parse_hex_color(hex_color: &str) -> Color {
-        let r = i32::from_str_radix(&hex_color[1..3], 16).unwrap();
-        let g = i32::from_str_radix(&hex_color[3..5], 16).unwrap();
-        let b = i32::from_str_radix(&hex_color[5..7], 16).unwrap();
-        Color::new(r, g, b)
+    fn parse_hex_color(hex_color: String) -> Color {
+        let hex_to_int = |s: &str| i32::from_str_radix(s, 16).unwrap_or(0);
+
+        Color::new(
+            hex_to_int(&hex_color[1..3]),
+            hex_to_int(&hex_color[3..5]),
+            hex_to_int(&hex_color[5..7]),
+        )
     }
 
     fn color_to_hex(color: Color) -> String {
@@ -46,7 +49,17 @@ impl ColorBlender {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+impl Default for ColorBlender {
+    fn default() -> Self {
+        ColorBlender {
+            start_color: "#000000".to_string(),
+            end_color: "#ffffff".to_string(),
+            precision: 10,
+        }
+    }
+}
+
+#[derive(/*Debug, */PartialEq, Eq/*, Clone*/)]
 struct Color {
     red: i32,
     green: i32,
