@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## \[Unreleased\]
 
+### Added
+
+  - Color converting to HSL, LCh, and RGB.
+  - TOML configuration (optional):
+    - Color distance
+    - Benchmark
+    - Midpoints
+
+## \[0.3.0\] - 2023-12-24
+
+### Added
+
+  - Added the option to benchmark the color blending.
+  - Added the possibility to calculate the difference between two hexadecimal
+    colors.
+
+### Changed
+
+  - Updated dependencies in `Cargo.lock` (`anyhow`, `libc`, `proc-macro2`, `rayon`).
+  - The GitHub Actions workflows now check, test and build on Windows and Linux.
+  - Bumped version in `Cargo.toml` (0.2.0 -\> 0.3.0).
+
+### Removed
+
+  - Removed the `-w, --write` flag, as the `-o, --output` flag is more concise.
+
 ## \[0.2.0\] - 2023-12-09
 
 ### Fixed

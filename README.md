@@ -27,14 +27,14 @@ $ cargo build --release
 ## Usage
 
 ```console
-$ ./color-blender-rs <first-color> <second-color> [-m <midpoints> --write <should-write> -o <output-file>]
+$ ./color-blender-rs <first-color> <second-color> [-m <midpoints> -o <output-file> --benchmark>]
 ```
 
   - `<start color>`: The starting hexadecimal color (e.g., "\#ff0000" for red).
   - `<end color>`: The ending hexadecimal color (e.g., "\#00ff00" for green).
   - `<midpoints>`: The number of midpoints to generate between the start and end colors. The default is 10.
-  - `<should-write>`: Specify if you want to write the blended colors to a file. If you won't, it will display the colors in the console.
-  - `<output-file>`: Self-explanatory.
+  - `<output-file>`: The output file to write the blended colors. (default: print colors to console).
+  - `<benchmark>`: Gets the time it takes to blend the colors in microseconds.
 
 ### Examples
 
@@ -47,7 +47,7 @@ $ ./color-blender-rs "#ff0000" "#00ff00" 5
 Blend 10 midpoints between blue (\#0000ff) and yellow (\#ffff00) and write the output to default (output.txt):
 
 ```console
-$ ./color-blender-rs "#0000ff" "#ffff00" 10 --write
+$ ./color-blender-rs "#0000ff" "#ffff00" 10 -o output.txt
 ```
 
 ## Contributing
