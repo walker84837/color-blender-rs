@@ -94,6 +94,8 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
+    colors = blender.blend_colors();
+
     match opt.output {
         Some(path) => {
             let file = File::create(&path)?;
@@ -107,7 +109,6 @@ fn main() -> Result<()> {
             });
         }
         None => {
-            colors = blender.blend_colors();
             for color in colors {
                 println!("{}", color);
             }
