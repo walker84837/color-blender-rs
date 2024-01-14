@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 
   - Color converting to HSL, LCh, and RGB.
-  - TOML configuration (optional):
+  - TOML configuration (optional).
 
 ## \[0.3.1\] - 2024-01-14
 
