@@ -1,41 +1,40 @@
-use anyhow::{Error, Result};
+use anyhow::{Context, Result};
+use clap::Parser;
 use std::{
     fs::File,
     io::{BufWriter, Write},
     path::PathBuf,
     time::Instant,
 };
-use structopt::StructOpt;
 
 pub struct Blending;
 mod color_blender;
 use color_blender::{ColorBlender, ColorConverter};
 
-#[derive(StructOpt)]
+#[derive(Parser)]
 #[structopt(name = "color-blender-rs", about = "A color blender, written in Rust.")]
 struct Opt {
-    #[structopt(help = "The first color in hex format")]
+    #[arg(help = "The first color in hex format")]
     first_color: String,
 
-    #[structopt(help = "Second color in hex format")]
+    #[arg(help = "Second color in hex format")]
     second_color: String,
 
-    #[structopt(short, long, default_value = "10", help = "Number of midpoints")]
+    #[arg(short, long, default_value = "10", help = "Number of midpoints")]
     midpoints: usize,
 
-    #[structopt(short, long, help = "Output file path")]
+    #[arg(short, long, help = "Output file path")]
     output: Option<PathBuf>,
 
-    #[structopt(short, long, help = "Calculates the sRGB distance between two colors")]
+    #[arg(short, long, help = "Calculates the sRGB distance between two colors")]
     distance: bool,
 
-    #[structopt(short, long, help = "Prints the time it took to blend colors")]
+    #[arg(short, long, help = "Prints the time it took to blend colors")]
     benchmark: bool,
 }
 
-
 fn main() -> Result<()> {
-    let opt = Opt::from_args();
+    let opt = Opt::parse();
 
     let first_color = opt.first_color.to_string();
     let second_color = opt.second_color.to_string();
@@ -44,14 +43,12 @@ fn main() -> Result<()> {
     let mut colors: Vec<String> = Vec::new();
 
     if opt.benchmark {
-        let num_iterations = &opt.midpoints;
-
         let start_time = Instant::now();
         colors = blender.blend_colors();
         let end_time = Instant::now();
 
         let elapsed_time = end_time - start_time;
-        let avg_time_per_iteration = (elapsed_time / *num_iterations as u32).as_nanos();
+        let avg_time_per_iteration = (elapsed_time / opt.midpoints as u32).as_nanos();
 
         for color in &colors {
             println!("{}", color);
@@ -62,18 +59,15 @@ fn main() -> Result<()> {
         return Ok(());
     }
 
-
     if opt.distance {
         let firstcolors = ColorConverter::hex_to_rgb(&opt.first_color)?;
         let lastcolors = ColorConverter::hex_to_rgb(&opt.second_color)?;
 
-        let first_colors = match firstcolors {
-            (r, g, b) => (r as f32, g as f32, b as f32),
-        };
+        let (r, g, b) = firstcolors;
+        let first_colors = (r as f32, g as f32, b as f32);
 
-        let last_colors = match lastcolors {
-            (r, g, b) => (r as f32, g as f32, b as f32),
-        };
+        let (r, g, b) = lastcolors;
+        let last_colors = (r as f32, g as f32, b as f32);
 
         let distance = color_difference(first_colors, last_colors);
 
@@ -98,13 +92,8 @@ fn main() -> Result<()> {
         Some(path) => {
             let file = File::create(&path)?;
             let writer = BufWriter::new(file);
-            return write_colors(colors, writer).map_err(|err| {
-                Error::msg(format!(
-                    "Error while writing file to '{}': {}",
-                    path.display(),
-                    err
-                ))
-            });
+            return write_colors(colors, writer)
+                .with_context(|| format!("Error while writing file to '{}'", path.display()));
         }
         None => {
             colors = blender.blend_colors();
@@ -124,15 +113,13 @@ fn write_colors<W: Write>(blended_colors: Vec<String>, mut writer: W) -> Result<
     }
 
     buffered_writer.flush()?;
-    println!("Data written successfully.");
-
     Ok(())
 }
 
 fn color_difference(first_color: (f32, f32, f32), second_color: (f32, f32, f32)) -> f32 {
-        let difference = ((second_color.0 - first_color.0) / 255.0).powf(2.0)
-            + ((second_color.1 - first_color.1) / 255.0).powf(2.0)
-            + ((second_color.2 - first_color.2) / 255.0).powf(2.0);
+    let difference = ((second_color.0 - first_color.0) / 255.0).powf(2.0)
+        + ((second_color.1 - first_color.1) / 255.0).powf(2.0)
+        + ((second_color.2 - first_color.2) / 255.0).powf(2.0);
 
-        difference.sqrt()
+    difference.sqrt()
 }

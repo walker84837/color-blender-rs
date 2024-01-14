@@ -11,9 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
   - Color converting to HSL, LCh, and RGB.
   - TOML configuration (optional):
-    - Color distance
-    - Benchmark
-    - Midpoints
+
+## \[0.3.1\] - 2024-01-14
+
+### Added
+
+  - sRGB color distance
+  - Benchmarking for color blending
 
 ## \[0.3.0\] - 2023-12-24
 
