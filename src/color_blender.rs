@@ -14,7 +14,7 @@ impl Default for ColorBlender {
         ColorBlender {
             start_color: "#000000".to_string(),
             end_color: "#ffffff".to_string(),
-            precision: 10,
+            precision: 10usize,
         }
     }
 }
