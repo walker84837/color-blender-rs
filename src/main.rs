@@ -29,13 +29,7 @@ struct Opt {
     #[arg(short, long, help = "Calculates the sRGB distance between two colors")]
     distance: bool,
 
-    #[structopt(short, long, help = "Output file path")]
-    output: Option<PathBuf>,
-
-    #[structopt(short, long, help = "Calculates the sRGB distance between two colors")]
-    distance: bool,
-
-    #[structopt(short, long, help = "Prints the time it took to blend colors")]
+    #[arg(short, long, help = "Prints the time it took to blend colors")]
     benchmark: bool,
 }
 
@@ -47,11 +41,10 @@ fn main() -> Result<()> {
     let second_color = opt.second_color.to_string();
 
     let blender = ColorBlender::new(first_color, second_color, opt.midpoints);
-    let mut colors: Vec<String> = Vec::new();
 
     if opt.benchmark {
         let start_time = Instant::now();
-        colors = blender.blend_colors();
+        let colors: Vec<String> = blender.blend_colors();
         let end_time = Instant::now();
 
         let elapsed_time = end_time - start_time;
@@ -76,37 +69,6 @@ fn main() -> Result<()> {
         let (r, g, b) = lastcolors;
         let last_colors = (r as f32, g as f32, b as f32);
 
-        let num_iterations = &opt.midpoints;
-
-        let start_time = Instant::now();
-        colors = blender.blend_colors();
-        let end_time = Instant::now();
-
-        let elapsed_time = end_time - start_time;
-        let avg_time_per_iteration = (elapsed_time / *num_iterations as u32).as_nanos();
-
-        for color in &colors {
-            println!("{}", color);
-        }
-
-        println!("Elapsed time: {}μs", elapsed_time.as_micros());
-        println!("Average time per iteration: {}ns", avg_time_per_iteration);
-        return Ok(());
-    }
-
-
-    if opt.distance {
-        let firstcolors = ColorConverter::hex_to_rgb(&opt.first_color)?;
-        let lastcolors = ColorConverter::hex_to_rgb(&opt.second_color)?;
-
-        let first_colors = match firstcolors {
-            (r, g, b) => (r as f32, g as f32, b as f32),
-        };
-
-        let last_colors = match lastcolors {
-            (r, g, b) => (r as f32, g as f32, b as f32),
-        };
-
         let distance = color_difference(first_colors, last_colors);
 
         println!("Distance: {distance}");
@@ -127,7 +89,7 @@ fn main() -> Result<()> {
     }
 
 
-    colors = blender.blend_colors();
+    let colors: Vec<String> = blender.blend_colors();
 
     match opt.output {
         Some(path) => {
@@ -143,6 +105,7 @@ fn main() -> Result<()> {
             }
         }
     };
+
     Ok(())
 }
 
