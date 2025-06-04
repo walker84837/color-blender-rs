@@ -1,5 +1,5 @@
 use crate::error::{ColorError, ColorResult};
-use std::cmp::Ordering;
+use std::{cmp::Ordering, ops::RangeInclusive};
 
 /// A color with red, green, and blue components normalized to [0.0, 1.0].
 #[derive(Debug, Copy, Clone)]
@@ -9,10 +9,18 @@ pub struct Color {
     blue: f32,
 }
 
+const NORMALIZED_RANGE: RangeInclusive<f32> = 0.0..=1.0;
+
 impl Color {
     /// Create a new Color from normalized f32 components.
-    pub fn new(red: f32, green: f32, blue: f32) -> Color {
-        Color { red, green, blue }
+    pub fn new(red: f32, green: f32, blue: f32) -> Option<Color> {
+        if NORMALIZED_RANGE.contains(&red)
+            && NORMALIZED_RANGE.contains(&green)
+            && NORMALIZED_RANGE.contains(&blue)
+        {
+            return Some(Color { red, green, blue });
+        }
+        None
     }
 
     /// Convert this Color to a hexadecimal `#rrggbb` string.
@@ -105,13 +113,13 @@ impl Blend for Color {
         let total_steps = midpoints + 2;
         let mut result = Vec::with_capacity(total_steps);
 
-        // TODO: should this be SIMD or keep SIMD impl behind a feature?
+        // TODO: should this be SIMD or add it but keep impl behind a feature?
         for i in 0..total_steps {
             let t = i as f32 / (total_steps - 1) as f32;
             let r = self.red + (other.red - self.red) * t;
             let g = self.green + (other.green - self.green) * t;
             let b = self.blue + (other.blue - self.blue) * t;
-            result.push(Color::new(r, g, b));
+            result.push(Color::new(r / 255.0, g / 255.0, b / 255.0).unwrap());
         }
 
         result
@@ -134,21 +142,20 @@ impl TryFrom<(f32, f32, f32)> for Color {
     type Error = crate::error::ColorError;
 
     fn try_from(components: (f32, f32, f32)) -> Result<Color, Self::Error> {
-        let valid_range = 0.0..=1.0;
-        if valid_range.contains(&components.0)
-            || valid_range.contains(&components.1)
-            || valid_range.contains(&components.2)
+        if NORMALIZED_RANGE.contains(&components.0)
+            || NORMALIZED_RANGE.contains(&components.1)
+            || NORMALIZED_RANGE.contains(&components.2)
         {
-            return Err(ColorError::WrongFormat(
-                "Normalized colors should be from 0 to 1".into(),
-            ));
+            return Ok(Color {
+                red: components.0,
+                green: components.1,
+                blue: components.2,
+            });
         }
 
-        Ok(Color {
-            red: components.0,
-            green: components.1,
-            blue: components.2,
-        })
+        Err(ColorError::WrongFormat(
+            "Normalized colors should be from 0 to 1".into(),
+        ))
     }
 }
 
@@ -197,7 +204,7 @@ mod tests {
         let end = Color::from((0u8, 255u8, 0u8)); // green
         let blended = start.blend(end, 5);
         assert_eq!(blended.len(), 7);
-        // First should be exactly start, last exactly end
+        // first should be exactly start, last exactly end
         assert_eq!(blended.first().unwrap(), &start);
         assert_eq!(blended.last().unwrap(), &end);
     }
@@ -206,7 +213,7 @@ mod tests {
     fn color_blend_unique() {
         let a = Color::from((10u8, 20u8, 30u8));
         let b = a; // same color
-                   // With zero midpoints, blend returns [a, b], but blend_unique should dedupe to [a].
+                   // with zero midpoints, blend should return [a, b], but blend_unique should dedupe to [a].
         let blended = a.blend_unique(b, 0);
         assert_eq!(blended.len(), 1);
         assert_eq!(blended[0], a);
