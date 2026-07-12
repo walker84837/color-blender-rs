@@ -2,9 +2,9 @@
 
 A color blender, written in Rust. The color blender takes two hexadecimal colors as input, along with the number of midpoints to generate between those two colors.
 
-![License](https://img.shields.io/badge/license-GPLv3-blue.svg)
+![License](https://img.shields.io/badge/license-0BSD-blue.svg)
 ![Project Status](https://img.shields.io/badge/status-Not%20actively%20developed-lightgrey.svg)
-![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg)
+[![No Maintenance Intended](https://unmaintained.tech/badge.svg)](https://unmaintained.tech/)
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@ A color blender, written in Rust. The color blender takes two hexadecimal colors
 
 ## Installation
 
-To build this application from source, you need [rustup](https://rustup.rs/) to use Cargo. Otherwise, you can download the precompile binaries.
+To build this application from source, you need [rustup](https://rustup.rs/) to use Cargo. Otherwise, you can download the precompiled binaries.
 
 Once you have successfully installed Rust and Cargo, you can proceed to build and install this program by executing the following command:
 
@@ -55,23 +55,19 @@ $ ./color-blender-rs "#0000ff" "#ffff00" 10 -o output.txt
 Contributions to the `color-blender-rs` project are always welcome\! If you want to contribute:
   - Follow the same code style. Format your code using:
   ```console
-  $ rustfmt --edition 2021 src/*
+  $ cargo fmt
   ```
-  - Obviously, follow the [code of conduct](CODE_OF_CONDUCT.md).
-  - I recommend using Rust stable rather than Rust nightly, for compatibility purposes.
-  If you notice my code has Rust nightly features, feel free to replace them with stable equivalents.
-  - If you have to use an external library, please use lightweight ones (eg. `ureq` over `reqwest`, `async-std` over `tokio`)
-  - Prefer using the standard library over reinventing the wheel.
-  - For big changes (let's take a new feature), open an issue, and describe the following points:
-    - Why should it be added? What does it add and why should it even be considered?
-    - What's the difference between using it and not using it?
+  - Follow the code of conduct (see [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)).
+  - For big changes (e.g., a new feature), open an issue, and describe the following points:
+    - Why should it be added?
+    - What's the difference between using it and not using it in practice? What does it enable?
 
 If you need help or guidance with this project, open an issue.
 
 ## License
 
-This project is licensed under the [GNU General Public License, version 3](LICENSE.md).
+This project is licensed under the [Zero-Clause BSD License](LICENSE).
 
 ## Project status
 
-Development is not particularly active as [I](https://github.com/walker84837) work on it when I have time. Contributions are welcome.
+I think this project has achieved its goal, so it isn't being actively developed, especially when it comes to adding new features. However, contributions are still welcome.
