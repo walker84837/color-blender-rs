@@ -13,7 +13,8 @@ jobs:
 	build-linux:
 		runs-on: ubuntu-latest
 		steps:
-			- uses: actions/checkout@v3
+			- uses: actions/checkout@v7
+			- uses: dtolnay/rust-toolchain@stable
 			- name: Check on Linux
 				run: cargo check --verbose
 			- name: Build on Linux
@@ -24,9 +25,8 @@ jobs:
 	build-windows:
 		runs-on: windows-latest
 		steps:
-			- uses: actions/checkout@v3
-			- name: Set up Rust on Windows
-				uses: actions/setup-rust@v1
+			- uses: actions/checkout@v7
+			- uses: dtolnay/rust-toolchain@stable
 			- name: Check on Windows
 				run: cargo check --verbose
 			- name: Build on Windows
